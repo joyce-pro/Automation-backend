@@ -8,7 +8,7 @@ const loginLinkedin = async (page) => {
             timeout: 30000
         });
 
-        page.setDefaultTimeout(10000);
+        page.setDefaultTimeout(40000);
 
         // Check if already logged in
         if (page.url() === 'https://www.linkedin.com/feed/') {
