@@ -2,7 +2,7 @@ const pg = require('pg');
 // pg.defaults.ssl = true
 
 const database = process.env.DATABASE;
-const user = process.env.USER;
+const user = process.env.DBUSER;
 const host = process.env.HOST;
 const password = process.env.PASSWORD;
 const dbPort = process.env.DBPORT;
