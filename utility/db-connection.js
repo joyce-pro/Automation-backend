@@ -1,5 +1,5 @@
 const pg = require('pg');
-// pg.defaults.ssl = true
+pg.defaults.ssl = true
 
 const database = process.env.DATABASE;
 const user = process.env.DBUSER;
@@ -14,9 +14,9 @@ const client = new pg.Client({
     database: database,
     password: password,
     port: dbPort,
-    // ssl: {
-    //     rejectUnauthorized: false, // Disable SSL certificate validation if necessary
-    // },
+    ssl: {
+        rejectUnauthorized: false, // Disable SSL certificate validation if necessary
+    },
 });
 
 module.exports = client
