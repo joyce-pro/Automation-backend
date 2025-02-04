@@ -6,7 +6,7 @@ const launchBrowser = async () => {
         const isLocal = true
         const options = isLocal
             ? {
-                headless: false,
+                headless: true,
                 args: ['--no-sandbox', '--disable-setuid-sandbox'],
                 // executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null, // Local Chrome path
                 userDataDir: path.resolve('./user-data'), // Local directory for persistent data
