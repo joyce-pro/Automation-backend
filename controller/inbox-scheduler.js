@@ -21,10 +21,10 @@ const captureApiResponses = async () => {
     page.setDefaultTimeout(30000);
 
 
-    await page.setViewport({
-        width: 1550, // Width in pixels
-        height: 1000, // Height in pixels
-    });
+    // await page.setViewport({
+    //     width: 1550, // Width in pixels
+    //     height: 1000, // Height in pixels
+    // });
 
     const browserStatus = await client.query(`Select * from browser`);
     if (browserStatus.rows[0].status == "RUNNING") res.status(409).send({ status: 'Instance Already Running' });
