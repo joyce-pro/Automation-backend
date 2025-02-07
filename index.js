@@ -8,6 +8,8 @@ const router = require('./routes/extension-router');
 const queue = require('./routes/queue-router');
 const message = require('./routes/inbox-router');
 const inbox = require('./routes/scheduler-router');
+const https = require('https');
+const fs = require('fs')
 
 const app = express();
 const port = process.env.PORT;
@@ -47,8 +49,14 @@ app.use('/inbox', inbox)
 
 
 // Initialize server
-app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+const options = {
+    key: fs.readFileSync("/home/ubuntu/ssl/key.pem"),
+    cert: fs.readFileSync("/home/ubuntu/ssl/cert.pem"),
+};
+
+// Create HTTPS server
+https.createServer(options, app).listen(port, () => {
+    console.log(`Server running on HTTPS (port ${port})`);
 });
 
 
