@@ -49,15 +49,19 @@ app.use('/inbox', inbox)
 
 
 // Initialize server
-const options = {
-    key: fs.readFileSync("/home/ubuntu/ssl/key.pem"),
-    cert: fs.readFileSync("/home/ubuntu/ssl/cert.pem"),
-};
+// const options = {
+//     key: fs.readFileSync("/home/ubuntu/ssl/key.pem"),
+//     cert: fs.readFileSync("/home/ubuntu/ssl/cert.pem"),
+// };
 
 // Create HTTPS server
-https.createServer(options, app).listen(port, () => {
-    console.log(`Server running on HTTPS (port ${port})`);
-});
+// https.createServer(options, app).listen(port, () => {
+//     console.log(`Server running on HTTPS (port ${port})`);
+// });
+
+app.listen(port, () => {
+    console.log(`Serve Running On Port: ${port}`)
+})
 
 
 // AWS Lambda Expose
