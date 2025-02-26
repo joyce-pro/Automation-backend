@@ -165,13 +165,13 @@ const sendRecruiterMessage = async (page, userIds, message, browser, period, sub
                 }, message, period, subject, followupSubject, followupMessage, firstname, lastname);
 
                 console.log(`Message sent to user ID: ${userId}`);
+                client.query(`UPDATE public.queue_user SET accept_status = $1 WHERE userurn = $2`, ["PENDING", userId]);
             } catch (error) {
                 console.error(`Error sending message to user ID: ${userId}`, error);
             }
 
             // Wait 20 seconds before sending the next message
             console.log("Waiting 20 seconds before sending the next message...");
-            client.query(`UPDATE public.queue_user SET accept_status = $1 WHERE userurn = $2`, ["PENDING", userId]);
             await new Promise(resolve => setTimeout(resolve, 20000));
         }
     } catch (error) {

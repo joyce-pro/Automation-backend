@@ -90,13 +90,14 @@ const sendRecruiterConnection = async (page, userUrls, message, browser) => {
                 }, message, firstname, lastname);
 
                 console.log(`Connection sent to user ID: ${userUrl}`);
+                client.query(`UPDATE public.connection_user SET accept_status = $1 WHERE userurn = $2`, ["PENDING", userUrl]);
+
             } catch (error) {
                 console.error(`Error sending message to user URL: ${userUrl}`, error);
             }
 
             // Wait 20 seconds before sending the next message
             console.log("Waiting 20 seconds before sending the next message...");
-            client.query(`UPDATE public.queue_user SET accept_status = $1 WHERE userurn = $2`, ["PENDING", userUrl]);
             await new Promise(resolve => setTimeout(resolve, 20000));
         }
     } catch (error) {
