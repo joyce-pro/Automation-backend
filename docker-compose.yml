@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  puppeteer-app:
+    build: .
+    container_name: puppeteer_container
+    ports:
+      - "5900:5900" # Changed host-side port to 5902 to prevent conflicts
+      - "6080:6080" # Changed host-side port to 6081 to prevent conflicts
+      - "5000:5000" # Exposing Node.js app on port 5000
+    environment:
+      - DISPLAY=:1
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+      - DATABASE=postgres
+      - PORT=5000
+      - DBPORT=5432
+      - DBUSER=postgres
+      - RECRUITER_EMAIL=shivangtech149@gmail.com
+      - RECRUITER_PASSWORD=dilmemerehaidardedisko
+      - PASSWORD=Athenashield123
+      - HOST=database-1.cb4sc482gvcc.eu-north-1.rds.amazonaws.com
+      - ENVIORNMENT=DEVELOPMENT
+    shm_size: '2gb' # Prevents Chromium crashes
+    volumes:
+      - .:/app # Mount project directory

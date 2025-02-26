@@ -4,7 +4,8 @@ const {
     createCampaign,
     fetchCampaigns,
     addData,
-    fetchData
+    fetchData,
+    addMultipleData
 } = require('../controller/scrapper-backend');
 
 
@@ -15,6 +16,7 @@ router.get('/fetch-campaign', fetchCampaigns);
 
 //Adding Data In Campaign And Fetching It
 router.post('/add-data', addData);
+router.post('/add-multiple-data', addMultipleData);
 router.get('/fetch-data/:dbId', fetchData);
 
 module.exports = router;

@@ -23,40 +23,51 @@ const sendRecruiterMessage = async (page, userIds, message, browser, period, sub
 
 
                     const formatTextWithLinks = (text, firstname, lastname) => {
-                        // Regular expression to detect URLs
-                        const urlRegex = /(https?:\/\/[^\s]+)/g;
-
-                        // Regular expressions to detect [firstname] and [lastname] placeholders
                         const firstnameRegex = /\[firstname\]/g;
                         const lastnameRegex = /\[lastname\]/g;
 
-                        // Escape text into HTML and replace placeholders
+                        // Replace placeholders for firstname and lastname
                         const formattedText = text
-                            .split('\n') // Split by line breaks
-                            .map((line) => {
-                                // Replace URLs with anchor tags
-                                const lineWithLinks = line.replace(
-                                    urlRegex,
-                                    (url) => `<a href="${url}" target="_blank" class="text-blue-500 underline">${url}</a>`
-                                );
-
-                                // Replace [firstname] with the provided firstname parameter
-                                const lineWithFirstname = lineWithLinks.replace(
-                                    firstnameRegex,
-                                    firstname || "[firstname]" // Fallback to [firstname] if no firstname is provided
-                                );
-
-                                // Replace [lastname] with the provided lastname parameter
-                                const lineWithLastname = lineWithFirstname.replace(
-                                    lastnameRegex,
-                                    lastname || "[lastname]" // Fallback to [lastname] if no lastname is provided
-                                );
-
-                                return `<p>${lineWithLastname}</p>`; // Wrap each line in a <p> tag
-                            })
-                            .join(''); // Combine lines back into a single string
+                            .replace(firstnameRegex, firstname || "[firstname]")
+                            .replace(lastnameRegex, lastname || "[lastname]");
 
                         return formattedText;
+                    };
+
+                    const typeInContentEditable = async (element, text) => {
+                        if (!element) return;
+                        element.focus(); // Focus on the element
+
+                        // Split text into chunks to handle URLs as <a> tags
+                        const urlRegex = /(https?:\/\/[^\s]+)/g;
+                        const chunks = text.split(urlRegex);
+
+                        for (let chunk of chunks) {
+                            // If chunk is a URL, insert it as an <a> tag
+                            if (urlRegex.test(chunk)) {
+                                const linkHTML = `<a href="${chunk}" target="_blank" class="text-blue-500 underline">${chunk}</a>`;
+                                document.execCommand("insertHTML", false, linkHTML);
+                            } else {
+                                // Otherwise, simulate typing each character
+                                for (let char of chunk) {
+                                    document.execCommand("insertText", false, char);
+                                    await new Promise(resolve => setTimeout(resolve, 50)); // Simulate delay between characters
+                                }
+                            }
+                        }
+                    };
+
+                    const typeText = async (element, text) => {
+                        if (!element) return;
+                        element.focus();  // Ensure the field is focused
+                        element.value = ""; // Clear the existing value
+                        element.dispatchEvent(new Event('input', { bubbles: true }));
+
+                        for (let char of text) {
+                            element.value += char;  // Append each character
+                            element.dispatchEvent(new Event('input', { bubbles: true }));
+                            await new Promise(resolve => setTimeout(resolve, 100)); // Simulate typing delay
+                        }
                     };
 
 
@@ -88,7 +99,7 @@ const sendRecruiterMessage = async (page, userIds, message, browser, period, sub
                             numDaysSelect.value = period; // Set the value to "4"
                             numDaysSelect.dispatchEvent(new Event('change'));
                         } else {
-                            console.error('Select element not found');
+                            console.error('Select number days element not found');
                         }
 
                         await new Promise(resolve => setTimeout(resolve, 4000));
@@ -107,24 +118,32 @@ const sendRecruiterMessage = async (page, userIds, message, browser, period, sub
                     await new Promise(resolve => setTimeout(resolve, 2000));
 
                     const inputElement = document.querySelectorAll('input[aria-label="Message subject"]');
+
                     if (inputElement) {
-                        inputElement[0].value = subject; // Set the desired value
-                        inputElement[0].dispatchEvent(new Event('input', { bubbles: true }));
+                        await typeText(inputElement[0], subject);
+
                         if (followupMessage || followupMessage != undefined) {
-                            inputElement[1].value = followupSubject; // Set the desired value
-                            inputElement[1].dispatchEvent(new Event('input', { bubbles: true }));
+                            await new Promise(resolve => setTimeout(resolve, 20000)); // Wait for 20 seconds
+                            await typeText(inputElement[1], followupSubject);
                         }
                     } else {
                         console.error('Input element not found');
                     }
-
+                    await new Promise(resolve => setTimeout(resolve, 3000));
 
                     const inputBox = document.querySelectorAll(".ql-editor[contenteditable='true']");
-                    inputBox[0].innerHTML = ""; // Clear existing content
-                    inputBox[0].innerHTML = formatTextWithLinks(message, firstname, lastname); // Insert the message
-                    if (followupMessage || followupMessage != undefined) {
-                        inputBox[1].innerHTML = ""; // Clear existing content
-                        inputBox[1].innerHTML = formatTextWithLinks(followupMessage, firstname, lastname); // Insert the message
+
+                    if (inputBox.length > 0) {
+                        inputBox[0].innerHTML = ""; // Clear existing content
+                        await typeInContentEditable(inputBox[0], formatTextWithLinks(message, firstname, lastname));
+
+                        if (followupMessage || followupMessage != undefined) {
+                            await new Promise(resolve => setTimeout(resolve, 20000)); // Wait for 20 seconds
+                            inputBox[1].innerHTML = ""; // Clear existing content
+                            await typeInContentEditable(inputBox[1], formatTextWithLinks(followupMessage, firstname, lastname));
+                        }
+                    } else {
+                        console.error("Input box not found");
                     }
                     await new Promise(resolve => setTimeout(resolve, 6000));
                     // Find and click the send button

@@ -5,10 +5,10 @@ const loginLinkedin = async (page) => {
 
         await page.goto('https://www.linkedin.com/login-cap', {
             // waitUntil: 'networkidle2',
-            timeout: 30000
+            timeout: 60000
         });
 
-        page.setDefaultTimeout(40000);
+        page.setDefaultTimeout(60000);
 
         // Check if already logged in
         if (page.url() === 'https://www.linkedin.com/feed/') {
@@ -18,8 +18,8 @@ const loginLinkedin = async (page) => {
 
             await page.click('#username', { clickCount: 3 });
             await page.keyboard.press('Backspace');
-            await page.type('#username', email, { delay: 100 });
-            await page.type('#password', password, { delay: 100 });
+            await page.type('#username', email, { delay: 300 });
+            await page.type('#password', password, { delay: 300 });
 
             // Click the login button
             await page.click('button[type="submit"]');
@@ -28,6 +28,7 @@ const loginLinkedin = async (page) => {
             await page.waitForNavigation({
                 waitUntil: 'networkidle2',
             });
+            await new Promise(resolve => setTimeout(resolve, 20000));
 
             console.log('Login successful and session saved!');
         }

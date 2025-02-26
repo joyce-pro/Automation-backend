@@ -8,6 +8,9 @@ const router = require('./routes/extension-router');
 const queue = require('./routes/queue-router');
 const message = require('./routes/inbox-router');
 const inbox = require('./routes/scheduler-router');
+const connection = require('./routes/connection-router');
+const whatsapp = require('./routes/whatsapp-router');
+const email = require('./routes/email-router');
 const https = require('https');
 const fs = require('fs')
 
@@ -44,7 +47,10 @@ app.get('/health-check', (req, res) => {
 app.use('/extension/', router);
 app.use('/queue', queue);
 app.use('/message', message);
-app.use('/inbox', inbox)
+app.use('/inbox', inbox);
+app.use('/connection', connection);
+app.use('/whatsapp', whatsapp);
+app.use('/email', email)
 
 
 

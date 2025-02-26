@@ -86,6 +86,54 @@ const addData = async (req, res) => {
 
 
 
+const addMultipleData = async (req, res) => {
+    const usersObject = req.body; // Expecting an object with user data as key-value pairs
+
+    if (typeof usersObject !== "object" || usersObject === null) {
+        return res.status(400).json({ error: "Input must be an object containing user data." });
+    }
+
+    const users = Object.values(usersObject); // Convert object to an array of users
+
+    try {
+        for (const user of users) {
+            const {
+                dbId,
+                firstName,
+                lastName,
+                location,
+                educations,
+                headline,
+                industryName,
+                contactEmail,
+                publicProfileUrl,
+                workExperience,
+                userUrn,
+            } = user;
+
+            if (!firstName) continue; // Skip invalid users
+
+            await client.query(`
+                INSERT INTO public.users 
+                (campaignid, firstName, lastName, location, headline, industryName, contactEmail, publicProfileUrl, educations, workExperience, userUrn)
+                VALUES (
+                    '${dbId}', '${firstName}', '${lastName}', '${location}', '${headline}', 
+                    '${industryName}', '${contactEmail}', '${publicProfileUrl}', 
+                    '${JSON.stringify(educations)}', '${JSON.stringify(workExperience)}', '${userUrn}'
+                )
+                ON CONFLICT (userUrn) DO NOTHING;
+            `);
+        }
+
+        res.status(201).json({ message: "All data added successfully." });
+    } catch (error) {
+        console.error("Error inserting data:", error);
+        res.status(500).json({ error: "Error inserting data." });
+    }
+};
+
+
+
 //Retrieving the profiles related with a campaign
 const fetchData = async (req, res) => {
     try {
@@ -102,5 +150,6 @@ module.exports = {
     createCampaign,
     fetchCampaigns,
     addData,
-    fetchData
+    fetchData,
+    addMultipleData
 };

@@ -15,10 +15,10 @@ const sendMessages = async (userIds, message, subject, followupMessage, followup
     const page = await browser.newPage();
     page.setDefaultTimeout(30000);
 
-    // await page.setViewport({
-    //     width: 1600, // Width in pixels
-    //     height: 1080, // Height in pixels
-    // });
+    await page.setViewport({
+        width: 1800, // Width in pixels
+        height: 1180, // Height in pixels
+    });
 
 
     await loginLinkedin(page);

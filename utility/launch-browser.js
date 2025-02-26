@@ -3,13 +3,19 @@ const { default: puppeteer } = require("puppeteer");
 
 const launchBrowser = async () => {
     try {
-        const isLocal = true
-        const options = isLocal
+        const isLocal = process.env.ENVIORNMENT
+        const options = isLocal == 'DEVELOPMENT'
             ? {
-                headless: true,
-                args: ['--no-sandbox', '--disable-setuid-sandbox'],
-                // executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null, // Local Chrome path
-                userDataDir: path.resolve('./user-data'), // Local directory for persistent data
+                headless: false,
+                args: [
+                    // "--no-sandbox",
+                    // "--disable-setuid-sandbox",
+                    "--start-maximized", // Opens Chrome in full screen
+                    // "--start-fullscreen",
+                    // "--window-size=1920,1080",
+                    // '--display=:99',
+                ],
+                userDataDir: path.resolve('/user-data'), // Store session persistently
             }
             : {
                 // args: [...chrome.args, '--no-sandbox', '--disable-setuid-sandbox'],
@@ -26,3 +32,17 @@ const launchBrowser = async () => {
 };
 
 module.exports = launchBrowser
+
+
+
+
+
+
+// const browser = await puppeteer.launch({
+//     headless: "new",
+//     args: [
+
+//     ],
+    
+//     userDataDir: path.resolve('./user-data'),
+// });
